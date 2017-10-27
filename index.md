@@ -1,37 +1,45 @@
-## Welcome to GitHub Pages
+## CNN based approach to Telugu OCR
 
-You can use the [editor on GitHub](https://github.com/GayamTrishal/OCR_Telugu.github.io/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
+### Abstract
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+In this paper, we address the task of Optical Character Recognition (OCR) for Telugu script. Telugu is a Dravidian language, native to India. OCR for English is well established and there are many mobile apps available. For Telugu the complexity is much more higher because of number of output classes possible and the inter class variability. Further there aren't any good OCR systems for Telugu. The main aim of this paper is to make an accruate end to end solution of Telugu. Inspired by the success of CNN in Object recognition, Character recognition, Segmentation etc; we employ CNNs in character recognition for Telugu. We also employ an MSER based solution for character segmentation like in English with minor improvements. We made server-client based mobile app of OCR for Telugu so that it can be used by people with poor vision.
 
-### Markdown
+### I. Introduction
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+Telugu is the official language of Telangana and Andhra Pradesh. It ranks third by the number of native speakers in India, fifteenth in the Ethnologue list of most-spoken languages worldwide. It has a complex orthography with a large number of distinct character shapes (estimated to be of the order of 10,000) composed of simple and compound characters formed from 16 vowels (called achus) and 36 consonants (called hallus). Optical Character Recognition (OCR) is the mechanical or electronic conversion of images of typed, handwritten or printed text into machine-encoded text. The availability of huge online collection of scanned documents justifies the necessity for an OCR system, but the complex script and grammar make the problem difficult. 
 
-```markdown
-Syntax highlighted code block
+The Indian subcontinent has more than 18 constitutionally recognized languages with several scripts but commercial products in Optical Character Recognition (OCR) are almost non-existent. In South India we have the Telugu and Kannada languages that have similar scripts. OCR system has a huge impact as a part of real life applications than along with a word processor. In the literature, other attempts to Telugu OCR have neither shown results on a large dataset [14] nor considered all possible character and vattu combinations possible in the language. Here we describe a novel end to end approach for Telugu OCR.
 
-# Header 1
-## Header 2
-### Header 3
+Apart from data, classifier selection also has a significant impact on an OCR system. Before deep learning was used, feature learning was a critical step in the design of any classifier because feeding raw data would not lead to the targeted results. Therefore, classification is generally performed after the difficult process of appropriate feature selection that distinguishes classes. To reduce the manual labour of finding optimal features researchers have developed convolutional neural network (CNN) to automate the process of learning features. Also the strong generalization capability of this multi layered network has pushed the classification beyond human accuracy. Due to these reasons we used CNN as a classifier in our OCR system.
 
-- Bulleted
-- List
+The rest of the paper is structured as follows. Section II talks about previous works on OCR systems. Section III briefly describes the methodology and novelties introduced in this paper. Section IV talks about the dataset. Section V presents the architectural details of the proposed CNN framework and overall model for classification of characters. Section VI gives an in-depth explanation of the prepossessing steps and segmentation algorithm.
 
-1. Numbered
-2. List
+### II. Related Work
 
-**Bold** and _Italic_ and `Code` text
+Optical character recognition has been one of the most studied problems in pattern recognition. For many recent years even feature engineering was dominated and many people used features like Wavelet features, Gabor features, Circular features, Skelton features etc;[1][2][3] followed by SVM or boosting based classifiers. But the success of CNN’s motivated us to use them for Telugu character recognition.
 
-[Link](url) and ![Image](src)
-```
+The first reported work on OCR for Telugu can be dated back to as early as 1977 by Rajasekharan, B.I. Deekshatulu  which used used features that encode the curves that trace a letter, and compare this encoding with a set of predefined templates [12]. It was able to identify 50 primitive features and proposes a two-stage syntax-aided character recognition system. The first attempt to use neural networks was made by M.B. Sukhaswami, P. Seetharamulu, A.K. Pujari which trains multiple neural networks, pre classify an image based on its aspect ratio and feed it to the corresponding network[4]. It demonstrated the robustness of a Hopfield network for the purpose of recognition of noisy Telugu characters.  Later work on Telugu OCR primarily followed the featurization classification paradigm [13].
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+The work by CV Jawahar [14] describes a bilingual Hindi-Telugu OCR for documents containing Hindi and Telugu text. It is based on Principal Component analysis followed by Support vector regression. The paper has mentioned an overall accuracy of 96.7\% over an independent test set. They have done the character level segmentation offline by their data collecting tools. But they have only considered 330 distinct classes. 
 
-### Jekyll Themes
+The work by Rakesh and Trevor on Telugu OCR using convolutional neural networks is also fascinating. They used 50 fonts in four styles for training data each image of size 48x48. But did not consider all possible outputs (only 457 classes) of CNN[5]. The work by Kunte and Samuel[20] on Kannada OCR employs a 2 stage classification system that is similar to ours. They have first used wavelets for feature extraction and then two stage multi layer perceptrons for the task of classification. They have divided the characters into seperate sub classes but have not considered all possible combinations.
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/GayamTrishal/OCR_Telugu.github.io/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+### III. Proposed Methodology
 
-### Support or Contact
+A general OCR system can be divided into four stages. Skew correction in which tilt in the image will be adjusted then word segmentation and binarization after which each document is converted into seperate words and binarized. This is followed by character segmentation in which word is divided into characters and a classifier is used to classify the character. The classifier engine is created by training on a dataset with labels. Our paper introduces novelties in Dataset, Classifier and Pre-processing techniques.
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+### IV. Dataset
+
+Dataset is the key for OCR systems. Unfortunately, there are very few works on Telugu dataset. The work by Pramod[17] et.al; has 1000 words and on an average of 32 images per category. They used the most frequently occuring words in Telugu but they can never cover all the words in Telugu. Later works were based on character level[18][19][20]. The dataset by Hastie[6] has 460 classes and 160 samples per class which made up-to 76000 images. But these works have not utilized all the possible combinations of vattu and gunintas. Here we come forth and propose a dataset which takes into consideration all possible combinations of vattu and gunintas with 17387 categories and nearly 560 samples per class. All the images are of size (32,32). There are 6757044 training samples, 972309 validation samples and 1934190 test samples which add upto 1 crore images(~10 GB).
+
+Each character has been augmented with 20 different fonts downloaded from [16], 5 different sizes, random rotations, additive gaussian noise and spatial transformations. Our dataset is novel because unlike other datasets which only take into account the commonly occuring permutations of characters and vattus, we have spanned the entire telugu alphabets and their corresponding vattu and guninthas.
+
+### V. Classifier
+
+The performance of an OCR system depends hugely on the performance of its classifier. Previous works on telugu OCR have done the character level segmentation based on histogram along X and Y direction. Assuming that the histogram method for segmentation would work perfectly, they have used SVM based classifiers for classification of characters. But we have observed that in real scenarios, histogram method fails to properly segment out the vattu and main character together. It also fails when the characters are rotated or if they share common region when projected on x-axis or y-axis.
+
+Inspired by the success of deep learning, we have explored CNN to classify the characters and proposed a new architecture for the same. CNN is a type of feed-forward neural network or a sequence of multiple layers which is inspired by biological processes. It eliminates the dependency on hand-crafted features and directly learns useful features from data itself. It is a combination of both feature extractor and classifier and mainly consists convolutional, pooling and fully connected layers.
+
+General telugu character consists of two main parts - main character and vattu/gunintham. Using a single CNN would be futile because of the huge number of classes arising from various permutations of main character, vattu and gunintham. We have used a 2 cnn architecture for classifying the character. First CNN is for identifying the main character and the second CNN for identifying the vattu and/or gunintam present along with the main character. The architectures for both the CNNs has been shown in Figure 1.
+
+
