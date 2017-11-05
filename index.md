@@ -1,4 +1,3 @@
-## CNN based approach to Telugu OCR
 
 ### Abstract
 
