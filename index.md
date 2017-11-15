@@ -1,5 +1,3 @@
-[Code Link](https://github.com/GayamTrishal/OCR_Telugu_code)
-
 ![OCR App](OCR_result.png)
 
 ![App](AppResult.PNG)
