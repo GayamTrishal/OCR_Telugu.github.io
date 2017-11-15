@@ -1,4 +1,4 @@
 theme: jekyll-theme-cayman
 title: CNN based approach to Telugu OCR
-navbar-links:
-  code link: https://github.com/GayamTrishal/OCR_Telugu_code
+show_downloads: true
+google_analytics:
